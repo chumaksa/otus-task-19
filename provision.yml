@@ -1,0 +1,71 @@
+---
+- name: Set up PXE server
+  hosts: servers
+  become: true
+  vars:
+    nginx_listen_port: 8080
+
+  tasks:
+    - name: Install nginx
+      package:
+        name: nginx
+        state: latest
+        update_cache: true
+
+    - name: Install tftp-server
+      package:
+        name: tftp-server
+        state: latest
+        update_cache: true
+
+    - name: Install dhcp-server
+      package:
+        name: dhcp-server
+        state: latest
+        update_cache: true 
+        
+    - name: Download ISO image AlmaLinux-9-latest
+      get_url:
+        url: http://mirror.yandex.ru/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso
+        dest: ~/AlmaLinux-9-latest-x86_64-boot.iso
+        mode: '0755'
+        
+    - name: Create ISO directory
+      file:
+        path: /usr/share/iso
+        state: directory
+        mode: '0755'        
+                       
+    - name: Mount ISO image
+      mount:
+        path: /mnt
+        src: /root/AlmaLinux-9-latest-x86_64-boot.iso
+        fstype: iso9660
+        opts: ro,loop
+        state: mounted
+                       
+    - name: copy ALL files from /mnt to /usr/share/iso
+      copy:
+        src: /mnt/
+        dest: /usr/share/iso
+        remote_src: yes 
+        directory_mode: yes                       
+                       
+    - name: Create nginx config file from template
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - Reload nginx
+
+  handlers:
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: yes
+
+    - name: Reload nginx
+      service:
+        name: nginx
+        state: reloaded
