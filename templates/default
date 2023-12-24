@@ -1,0 +1,20 @@
+default menu.c32
+prompt 0
+timeout 150
+ONTIME local
+menu title OTUS PXE Boot Menu
+label 1
+menu label ^ Graph install AlmaLinux 9 latest
+kernel /vmlinuz
+initrd /initrd.img
+append ip=enp0s3:dhcp inst.repo=http://10.0.0.20:8080
+label 2
+menu label ^ Text install AlmaLinux 9 latest
+kernel /vmlinuz
+initrd /initrd.img
+append ip=enp0s3:dhcp inst.repo=http://10.0.0.20:8080 text
+label 3
+menu label ^ Rescue installed system
+kernel /vmlinuz
+initrd /initrd.img
+append ip=enp0s3:dhcp inst.repo=http://10.0.0.20:8080 rescue

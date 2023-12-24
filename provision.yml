@@ -24,11 +24,11 @@
         state: latest
         update_cache: true 
         
-    - name: Download ISO image AlmaLinux-9-latest
-      get_url:
-        url: http://mirror.yandex.ru/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso
-        dest: ~/AlmaLinux-9-latest-x86_64-boot.iso
-        mode: '0755'
+#    - name: Download ISO image AlmaLinux-9-latest
+#      get_url:
+#        url: http://mirror.yandex.ru/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso
+#        dest: ~/AlmaLinux-9-latest-x86_64-boot.iso
+#        mode: '0755'
         
     - name: Create ISO directory
       file:
@@ -57,6 +57,68 @@
         dest: /etc/nginx/nginx.conf
       notify:
         - Reload nginx
+        
+    - name: Create TFTP directory
+      file:
+        path: /var/lib/tftpboot/pxelinux.cfg
+        state: directory
+        mode: '0755'        
+
+    - name: Set up pxelinux
+      template:
+        src: default
+        dest: /var/lib/tftpboot/pxelinux.cfg/default
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install syslinux
+      package:
+        name: syslinux
+        state: latest
+        update_cache: true
+
+    - name: Copy syslinux files to TFTP share
+      copy:
+        src: /usr/share/syslinux/{{ item }}
+        dest: /var/lib/tftpboot/{{ item }}
+        mode: '0644'
+        remote_src: true
+      with_items:
+        - pxelinux.0
+        - ldlinux.c32
+        - libmenu.c32
+        - libutil.c32
+        - menu.c32
+        - vesamenu.c32
+
+    - name: Copy initrd and vmlinuz files to TFTP share
+      copy:
+        src: /usr/share/iso/images/pxeboot/{{ item }}
+        dest: /var/lib/tftpboot/{{ item }}
+        mode: '0755'
+        remote_src: true
+      with_items:
+        - initrd.img
+        - vmlinuz
+
+    - name: Restart tftp-server
+      service:
+        name: tftp.service
+        state: restarted
+        enabled: true
+
+    - name: Set up dhcp-server
+      template:
+        src: dhcpd.conf
+        dest: /etc/dhcp/dhcpd.conf
+        mode: '0644'
+
+    - name: Restart dhcp-server
+      service:
+        name: dhcpd
+        state: restarted
+        enabled: true
 
   handlers:
     - name: Restart nginx
