@@ -250,3 +250,12 @@ pxeserver                  : ok=18   changed=13   unreachable=0    failed=0    s
 ![alt text](readmeimg/screenshot_01.png)
 ![alt text](readmeimg/screenshot_02.png)
 ![alt text](readmeimg/screenshot_03.png)
+
+Запускаем виртуалку и жмём "F12" для выбора устройства с которого хотим загрузиться. Выбираем LAN.
+![alt text](readmeimg/screenshot_04.png)
+
+Получаем меню загрузки с нашего сервера.
+![alt text](readmeimg/screenshot_05.png)
+
+Выбираем первый пункт и ждём загрузки установщика ОС в графическом режиме.
+![alt text](readmeimg/screenshot_06.png)
