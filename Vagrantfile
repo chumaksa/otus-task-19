@@ -21,22 +21,4 @@ config.vm.define "pxeserver" do |server|
   
   end
 
-
-config.vm.define "pxeclient" do |pxeclient|
-  pxeclient.vm.box = 'centos/7'
-
-  pxeclient.vm.host_name = 'pxeclient'
-  pxeclient.vm.network :private_network, 
-                     #ip: "10.0.0.21", 
-                     virtualbox__intnet: 'pxenet'
-
-
-  pxeclient.vm.provider "virtualbox" do |vb|
-    vb.memory = "4096"
-    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-  end
-  
-  end
-
-
 end

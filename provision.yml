@@ -24,11 +24,11 @@
         state: latest
         update_cache: true 
         
-#    - name: Download ISO image AlmaLinux-9-latest
-#      get_url:
-#        url: http://mirror.yandex.ru/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso
-#        dest: ~/AlmaLinux-9-latest-x86_64-boot.iso
-#        mode: '0755'
+    - name: Download ISO image AlmaLinux-9-latest
+      get_url:
+        url: http://mirror.yandex.ru/almalinux/9.3/isos/x86_64/AlmaLinux-9-latest-x86_64-boot.iso
+        dest: ~/AlmaLinux-9-latest-x86_64-boot.iso
+        mode: '0755'
         
     - name: Create ISO directory
       file:
